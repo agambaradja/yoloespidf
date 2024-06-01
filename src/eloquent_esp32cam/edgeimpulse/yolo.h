@@ -1,6 +1,8 @@
 #ifndef ELOQUENT_ESP32CAM_EDGEIMPULSE_yolo_H
 #define ELOQUENT_ESP32CAM_EDGEIMPULSE_yolo_H
 
+#include <string> // Include the C++ standard library for std::string
+
 #if defined(EI_CLASSIFIER_OBJECT_DETECTION)
     #include "./image.h"
     #include "./bbox.h"
@@ -89,11 +91,8 @@
                     /**
                      * Convert to JSON string
                      */
-                    String toJSON() {
-                        static char buf[10 * 33] = {' '};
-                        String json(buf);
-                        
-                        json = "[]";
+                    std::string toJSON() {
+                        std::string json = "[]";
 
                         if (!found())
                             return json;
@@ -108,15 +107,15 @@
                             json += "\"label\":\"";
                             json += bbox.label;
                             json += "\",\"proba\":";
-                            json += bbox.proba;
+                            json += std::to_string(bbox.proba);
                             json += ",\"x\":";
-                            json += bbox.x;
+                            json += std::to_string(bbox.x);
                             json += ",\"y\":";
-                            json += bbox.y;
+                            json += std::to_string(bbox.y);
                             json += ",\"w\":";
-                            json += bbox.width;
+                            json += std::to_string(bbox.width);
                             json += ",\"h\":";
-                            json += bbox.height;
+                            json += std::to_string(bbox.height);
                             json += '}';
                         });
 

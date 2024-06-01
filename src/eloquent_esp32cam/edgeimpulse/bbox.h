@@ -1,11 +1,13 @@
 #ifndef ELOQUENT_ESP32CAM_EDGEIMPULSE_BBOX_H
 #define ELOQUENT_ESP32CAM_EDGEIMPULSE_BBOX_H
 
+#include <string>
+
 namespace eloq {
     namespace ei {
         class bbox_t {
             public:
-                String label;
+                std::string label;
                 float proba;
                 uint16_t x;
                 uint16_t y;
@@ -17,17 +19,18 @@ namespace eloq {
                 uint16_t cy;
                 uint16_t width;
                 uint16_t height;
+
                 /**
                  * Constructor
                  */
-                bbox_t(String label_, float proba_, uint16_t x_, uint16_t y_, uint16_t width_, uint16_t height_) :
+                bbox_t(std::string label_, float proba_, uint16_t x_, uint16_t y_, uint16_t width_, uint16_t height_) :
                     label(label_),
                     proba(proba_) {
                         setDimensions(x_, y_, width_, height_);
                     }
 
                 /**
-                 * 
+                 * Set dimensions of the bounding box
                  */
                 void setDimensions(uint16_t x_, uint16_t y_, uint16_t width_, uint16_t height_) {
                     x = x1 = x_;

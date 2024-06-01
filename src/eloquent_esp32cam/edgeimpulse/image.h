@@ -5,6 +5,7 @@
 #include <edge-impulse-sdk/dsp/image/image.hpp>
 #include "../extra/pubsub.h"
 #include "./classifier.h"
+#include <string>
 
 using namespace eloq;
 using ei::signal_t;
@@ -27,7 +28,7 @@ namespace Eloquent
             class ImageClassifier : public Classifier
             {
             public:
-                String label;
+                std::string label;
                 uint8_t ix;
                 float proba;
                 size_t srcWidth;
@@ -72,7 +73,7 @@ namespace Eloquent
                         return exception.set("Cannot acquire mutex for camera frame");
 
                     if (error != EI_IMPULSE_OK)
-                        return exception.set(String(" "));
+                        return exception.set(std::string(" "));
 
                     afterClassification();
                     breakTiming();
@@ -83,9 +84,9 @@ namespace Eloquent
                 /**
                  * Convert to JSON string
                  */
-                virtual String toJSON()
+                virtual std::string toJSON()
                 {
-                    return String("{\"label\":\"") + label + "\",\"proba\":" + proba + "}";
+                    return "{\"label\":\"" + label + "\",\"proba\":" + std::to_string(proba) + "}";
                 }
 
                 /**
@@ -161,7 +162,7 @@ namespace Eloquent
                 int getData(size_t offset, size_t length, float *out)
                 {
                     size_t i = 0;
-                    const size_t end = min((int)EI_CLASSIFIER_RAW_SAMPLE_COUNT, (int)(offset + length));
+                    const size_t end = std::min((int)EI_CLASSIFIER_RAW_SAMPLE_COUNT, (int)(offset + length));
 
                     for (uint16_t y = 0; y < EI_CLASSIFIER_INPUT_HEIGHT; y++)
                     {
@@ -186,7 +187,7 @@ namespace Eloquent
 #if _EI_RGB_
                             out[i - offset] = (r << 16) | (g << 8) | b;
 #else
-                            const uint32_t gray = constrain((r * 38 + g * 75 + b * 15) >> 7, 0, 255);
+                            const uint32_t gray = std::constrain((r * 38 + g * 75 + b * 15) >> 7, 0, 255);
                             out[i - offset] = (gray << 16) | (gray << 8) | gray;
 #endif
                         }
