@@ -69,7 +69,7 @@ void camera_task(void *pvParameter) {
 }
 
 extern "C" void app_main() {
-    esp_log_level_set(TAG, ESP_LOG_INFO);
+    esp_log_level_set(TAG, ESP_LOG_VERBOSE);
 
     // Initialize UART0 for debugging
     const uart_port_t uart_num = UART_NUM_0;
