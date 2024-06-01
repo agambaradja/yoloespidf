@@ -1,6 +1,9 @@
 #ifndef ELOQUENT_EXTRA_TIME_BENCHMARK
 #define ELOQUENT_EXTRA_TIME_BENCHMARK
 
+#include "esp_timer.h" // Include ESP-IDF header for timing
+#include "freertos/FreeRTOS.h" // Include FreeRTOS header for timing
+
 namespace Eloquent {
     namespace Extra {
         namespace Time {
@@ -14,14 +17,14 @@ namespace Eloquent {
                  * Start timer
                  */
                 void start() {
-                    timeStart = micros();
+                    timeStart = esp_timer_get_time(); // Use ESP-IDF's esp_timer_get_time() instead of micros()
                 }
 
                 /**
                  * Stop timer
                  */
                 size_t stop() {
-                    elapsedInMicros = micros() - timeStart;
+                    elapsedInMicros = esp_timer_get_time() - timeStart; // Use ESP-IDF's esp_timer_get_time() instead of micros()
 
                     return millis();
                 }
@@ -76,8 +79,8 @@ namespace Eloquent {
                 }
 
             protected:
-                size_t timeStart;
-                size_t elapsedInMicros;
+                int64_t timeStart;
+                int64_t elapsedInMicros;
             };
         }
     }

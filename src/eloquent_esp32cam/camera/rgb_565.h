@@ -25,9 +25,9 @@ namespace Eloquent {
                     /**
                      * 
                      */
-                    Converter565(Camera *cam) : 
-                        exception("RGB565Converter"), 
+                    Converter565(Camera *cam) :  
                         camera(cam),
+                        exception("RGB565Converter"),
                         length(0),
                         width(0),
                         height(0) {

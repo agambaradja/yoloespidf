@@ -17,13 +17,12 @@ namespace Eloquent {
                      */
                     Thread(const char* threadName) :
                         name(threadName),
+                        args(NULL), // Initialize args to NULL
                         priority(0),
-                        stackSize(1000),
-                        args(NULL) {
-
+                        stackSize(1000)
+                    {
                         core = xPortGetCoreID();
                     }
-
                     /**
                      * Set task args
                      * @return
