@@ -23,7 +23,7 @@ void camera_task(void *pvParameter) {
     while (true) {
         if (!camera.capture().isOk()) {
             ESP_LOGE(TAG, "Failed to capture frame: %s", camera.exception.toString().c_str());
-            vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay to avoid tight loop on failure
+//            vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay to avoid tight loop on failure
             continue;
         }
 
@@ -34,12 +34,12 @@ void camera_task(void *pvParameter) {
 
         if (!yolo.run().isOk()) {
             ESP_LOGE(TAG, "YOLO inference failed: %s", yolo.exception.toString().c_str());
-            vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay to avoid tight loop on failure
+//            vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay to avoid tight loop on failure
             continue;
         }
 
         if (!yolo.foundAnyObject()) {
-            vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay if no objects found
+//            vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay if no objects found
             continue;
         }
 
