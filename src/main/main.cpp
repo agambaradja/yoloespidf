@@ -64,7 +64,7 @@ void camera_task(void *pvParameter) {
             });
         }
 
-        vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay between captures
+//        vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay between captures
     }
 }
 
