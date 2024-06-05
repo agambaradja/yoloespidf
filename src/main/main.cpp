@@ -88,7 +88,7 @@ extern "C" void app_main() {
     uart_driver_install(uart_num, 1024 * 2, 0, 0, NULL, 0);
 
     // Initialize the camera
-    camera.brownout.disable();
+//    camera.brownout.disable();
     camera.resolution.yolo();
 
     while (!camera.begin().isOk()) {
