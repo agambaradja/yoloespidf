@@ -27,11 +27,6 @@ void camera_task(void *pvParameter) {
             continue;
         }
 
-        ESP_LOGI(TAG, "Total heap: %d", heap_caps_get_total_size(MALLOC_CAP_DEFAULT));
-        ESP_LOGI(TAG, "Free heap: %d", heap_caps_get_free_size(MALLOC_CAP_DEFAULT));
-        ESP_LOGI(TAG, "Total PSRAM: %d", heap_caps_get_total_size(MALLOC_CAP_SPIRAM));
-        ESP_LOGI(TAG, "Free PSRAM: %d", heap_caps_get_free_size(MALLOC_CAP_SPIRAM));
-
         if (!yolo.run().isOk()) {
             ESP_LOGE(TAG, "YOLO inference failed: %s", yolo.exception.toString().c_str());
 //            vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay to avoid tight loop on failure
@@ -70,6 +65,11 @@ void camera_task(void *pvParameter) {
 
 extern "C" void app_main() {
     esp_log_level_set(TAG, ESP_LOG_VERBOSE);
+    ESP_LOGI(TAG, "Total heap: %d", heap_caps_get_total_size(MALLOC_CAP_DEFAULT));
+    ESP_LOGI(TAG, "Free heap: %d", heap_caps_get_free_size(MALLOC_CAP_DEFAULT));
+    ESP_LOGI(TAG, "Total PSRAM: %d", heap_caps_get_total_size(MALLOC_CAP_SPIRAM));
+    ESP_LOGI(TAG, "Free PSRAM: %d", heap_caps_get_free_size(MALLOC_CAP_SPIRAM));
+
 
     // Initialize UART0 for debugging
     const uart_port_t uart_num = UART_NUM_0;
