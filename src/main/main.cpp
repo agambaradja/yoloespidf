@@ -4,6 +4,8 @@
 #include <esp_log.h>
 #include <driver/uart.h>
 #include <esp_heap_caps.h>
+#include "soc/soc.h"
+#include "soc/rtc_cntl_reg.h"
 
 #ifndef RX
 #define RX 44
@@ -21,35 +23,37 @@ char pos;
 
 void camera_task(void *pvParameter) {
     while (true) {
+            pos = 'n';
         if (!camera.capture().isOk()) {
             ESP_LOGE(TAG, "Failed to capture frame: %s", camera.exception.toString().c_str());
-            vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay to avoid tight loop on failure
+            vTaskDelay(10 / portTICK_PERIOD_MS); // Delay to avoid tight loop on failure
             continue;
         }
 
-        if (!yolo.run().isOk()) {
+         if (!yolo.run().isOk()) {
             ESP_LOGE(TAG, "YOLO inference failed: %s", yolo.exception.toString().c_str());
-            vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay to avoid tight loop on failure
+            vTaskDelay(10 / portTICK_PERIOD_MS); // Delay to avoid tight loop on failure
             continue;
         }
 
-        if (!yolo.foundAnyObject()) {
-//            vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay if no objects found
+         if (!yolo.foundAnyObject()) {
+            vTaskDelay(10 / portTICK_PERIOD_MS); // Delay if no objects found
             continue;
         }
 
         if (yolo.first.cx <= EI_CLASSIFIER_INPUT_WIDTH / 3) {
-            pos = 'l';
+            pos = 'r';
         } else if (yolo.first.cx <= EI_CLASSIFIER_INPUT_WIDTH * 2 / 3) {
             pos = 'c';
         } else {
-            pos = 'r';
+            pos = 'l';
         }
+        ESP_LOGI(TAG, "pposisi: %c", pos);
 
-        uint8_t esp_data[7] = {0x5A, 0x9F, 0x3A, 0x41, 0x6F, static_cast<uint8_t>(pos), 0x00};
+         uint8_t esp_data[7] = {0x5A, 0x9F, 0x3A, 0x41, 0x6F, static_cast<uint8_t>(pos), 0x00};
         uart_write_bytes(UART_NUM_0, (const char *)esp_data, sizeof(esp_data));
 
-        if (yolo.count() > 1) {
+/*         if (yolo.count() > 1) {
             yolo.forEach([](int i, bbox_t bbox) {
                 if (bbox.cx <= EI_CLASSIFIER_INPUT_WIDTH / 3) pos = 'l';
                 else if (bbox.cx <= EI_CLASSIFIER_INPUT_WIDTH * 2 / 3) pos = 'c';
@@ -57,14 +61,17 @@ void camera_task(void *pvParameter) {
                 uint8_t esp_data[7] = {0x5A, 0x9F, 0x3A, 0x41, 0x6F, static_cast<uint8_t>(pos), 0x00};
                 uart_write_bytes(UART_NUM_0, (const char *)esp_data, sizeof(esp_data));
             });
-        }
+        }   */
 
-        vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay between captures
+        vTaskDelay(10 / portTICK_PERIOD_MS); // Delay between captures
     }
+
 }
 
+
+
 extern "C" void app_main() {
-    esp_log_level_set(TAG, ESP_LOG_VERBOSE);
+   /*  esp_log_level_set(TAG, ESP_LOG_VERBOSE); */
     ESP_LOGI(TAG, "Total heap: %d", heap_caps_get_total_size(MALLOC_CAP_DEFAULT));
     ESP_LOGI(TAG, "Free heap: %d", heap_caps_get_free_size(MALLOC_CAP_DEFAULT));
     ESP_LOGI(TAG, "Total PSRAM: %d", heap_caps_get_total_size(MALLOC_CAP_SPIRAM));
@@ -88,14 +95,15 @@ extern "C" void app_main() {
     uart_driver_install(uart_num, 1024 * 2, 0, 0, NULL, 0);
 
     // Initialize the camera
-//    camera.brownout.disable();
-    camera.resolution.yolo();
+    //camera.brownout.disable();
+     camera.resolution.yolo();
 
     while (!camera.begin().isOk()) {
         ESP_LOGE(TAG, "Camera initialization failed: %s", camera.exception.toString().c_str());
     }
-    ESP_LOGI(TAG, "Camera initialized successfully");
+    ESP_LOGI(TAG, "Camera initialized successfully"); 
 
     // Create the camera task
-    xTaskCreate(&camera_task, "camera_task", 8192, NULL, 5, NULL);
+    xTaskCreate(&camera_task, "camera_task", 8192, NULL, 16, NULL);
+    //xTaskCreate(&hello_task, "hello_task", 2048, NULL, 5, NULL);
 }
