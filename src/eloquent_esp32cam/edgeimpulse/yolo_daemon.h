@@ -70,12 +70,12 @@ namespace Eloquent {
                 void start() {
                     thread
                         .withArgs((void*) this)
-                        .withStackSize(4000)
-                        .withPriority(17) // Adjust priority as needed
+                        .withStackSize(8192)
+                        .withPriority(31) // Adjust priority as needed
                         .run([](void *args) {
                             yoloDaemon *self = (yoloDaemon*) args;
 
-                            vTaskDelay(3000 / portTICK_PERIOD_MS); // Use vTaskDelay instead of delay
+                            //vTaskDelay(3000 / portTICK_PERIOD_MS); // Use vTaskDelay instead of delay
 
                             while (true) {
                                 vTaskDelay(1); // Use vTaskDelay instead of delay

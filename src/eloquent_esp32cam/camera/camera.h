@@ -69,8 +69,8 @@ namespace Eloquent {
                     config.pixel_format = PIXFORMAT_RGB565;
 
                     config.frame_size = FRAMESIZE_96X96;
-                    config.fb_location = CAMERA_FB_IN_PSRAM;
-                    config.fb_count = 2;
+                    config.fb_location = CAMERA_FB_IN_DRAM;
+                    config.fb_count = 3;
                     config.grab_mode = CAMERA_GRAB_LATEST;
                 }
 

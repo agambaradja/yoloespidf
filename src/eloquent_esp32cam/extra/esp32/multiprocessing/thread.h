@@ -20,6 +20,7 @@ namespace Eloquent {
                         args(NULL), // Initialize args to NULL
                         priority(0),
                         stackSize(1000)
+                        
                     {
                         core = xPortGetCoreID();
                     }
@@ -84,13 +85,14 @@ namespace Eloquent {
                     void run(Task task) {
                         ESP_LOGI(name, "Starting thread with stack size %d bytes on core %d", (int) stackSize, (int) core);
 
-                        xTaskCreate(
+                        xTaskCreatePinnedToCore(
                             task,      // Function to implement the task
                             name,      // Name of the task
                             stackSize, // Stack size in bytes
                             args,      // Task input parameter
                             priority,  // Priority of the task
-                            NULL       // Task handle.
+                            NULL,       // Task handle.
+                            0
                         );
                     }
 
