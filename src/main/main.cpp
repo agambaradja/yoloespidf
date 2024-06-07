@@ -4,8 +4,7 @@
 #include <esp_log.h>
 #include <driver/uart.h>
 #include <esp_heap_caps.h>
-#include "soc/soc.h"
-#include "soc/rtc_cntl_reg.h"
+
 
 #ifndef RX
 #define RX 44
@@ -23,6 +22,7 @@ char pos;
 
 void camera_task(void *pvParameter) {
     while (true) {
+        ESP_LOGI(TAG, "Hello world!");
             pos = 'n';
         if (!camera.capture().isOk()) {
             ESP_LOGE(TAG, "Failed to capture frame: %s", camera.exception.toString().c_str());
@@ -42,11 +42,11 @@ void camera_task(void *pvParameter) {
         }
 
         if (yolo.first.cx <= EI_CLASSIFIER_INPUT_WIDTH / 3) {
-            pos = 'r';
+            pos = 'l';
         } else if (yolo.first.cx <= EI_CLASSIFIER_INPUT_WIDTH * 2 / 3) {
             pos = 'c';
         } else {
-            pos = 'l';
+            pos = 'r';
         }
         ESP_LOGI(TAG, "pposisi: %c", pos);
 
@@ -61,13 +61,12 @@ void camera_task(void *pvParameter) {
                 uint8_t esp_data[7] = {0x5A, 0x9F, 0x3A, 0x41, 0x6F, static_cast<uint8_t>(pos), 0x00};
                 uart_write_bytes(UART_NUM_0, (const char *)esp_data, sizeof(esp_data));
             });
-        }   */
-
+        }  
+ */
         vTaskDelay(10 / portTICK_PERIOD_MS); // Delay between captures
     }
 
 }
-
 
 
 extern "C" void app_main() {
@@ -104,6 +103,5 @@ extern "C" void app_main() {
     ESP_LOGI(TAG, "Camera initialized successfully"); 
 
     // Create the camera task
-    xTaskCreate(&camera_task, "camera_task", 8192, NULL, 16, NULL);
-    //xTaskCreate(&hello_task, "hello_task", 2048, NULL, 5, NULL);
+    xTaskCreate(&camera_task, "camera_task", 4096, NULL, 5, NULL);
 }
