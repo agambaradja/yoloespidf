@@ -18,7 +18,8 @@ using eloq::camera;
 using eloq::ei::yolo;
 
 static const char *TAG = "main";
-char pos;
+char pos = 'n';
+uint8_t esp_data[7] = {0x5A, 0x9F, 0x3A, 0x41, 0x6F, pos, 0x00};
 
 extern "C" void app_main() {
     // Initialize UART0 for debugging
@@ -38,9 +39,9 @@ extern "C" void app_main() {
     uart_driver_install(uart_num, 1024 * 2 , 0, 0, NULL, 0);
     camera.resolution.yolo();
 
-    while (!camera.begin().isOk()) vTaskDelay(10 / portTICK_PERIOD_MS);
+    while (!camera.begin().isOk());
     
-    ESP_LOGI(TAG, "Camera initialized successfully"); 
+    //ESP_LOGI(TAG, "Camera initialized successfully"); 
 
     while (true) {
         if (!camera.capture().isOk()) {
@@ -54,29 +55,32 @@ extern "C" void app_main() {
             continue;
         }
          if (!yolo.foundAnyObject()) {
-            pos = 'n';
-            ESP_LOGI(TAG, "pposisi: %c", pos);
-            uint8_t esp_data[7] = {0x5A, 0x9F, 0x3A, 0x41, 0x6F, pos, 0x00};
+            //pos = 'n';
+            //ESP_LOGI(TAG, "pposisi: %c", pos);
+            //uint8_t esp_data[7] = {0x5A, 0x9F, 0x3A, 0x41, 0x6F, pos, 0x00};
+            esp_data[5] = 'n';
             uart_write_bytes(UART_NUM_0, esp_data, sizeof(esp_data));
             vTaskDelay(10 / portTICK_PERIOD_MS); // Delay if no objects found
             continue;
         }
-        if (yolo.first.cx <= EI_CLASSIFIER_INPUT_WIDTH / 3) pos = 'r';
-        else if (yolo.first.cx <= EI_CLASSIFIER_INPUT_WIDTH * 2 / 3) pos = 'c';
-        else pos = 'l';
 
-        ESP_LOGI(TAG, "pposisi: %c", pos);
+        if (yolo.first.cx <= EI_CLASSIFIER_INPUT_WIDTH / 3) esp_data[5] = 'r'; //pos = 'r';
+        else if (yolo.first.cx <= EI_CLASSIFIER_INPUT_WIDTH * 2 / 3) esp_data[5] = 'c'; //pos = 'c';
+        else esp_data[5] = 'r';  //pos = 'l';
 
-        uint8_t esp_data[7] = {0x5A, 0x9F, 0x3A, 0x41, 0x6F, pos, 0x00};
+        //ESP_LOGI(TAG, "pposisi: %c", pos);
+
+        esp_data[5] = pos;
         uart_write_bytes(UART_NUM_0, esp_data, sizeof(esp_data));
 
          if (yolo.count() > 1) {
             yolo.forEach([](int i, bbox_t bbox) {
-                if (bbox.cx <= EI_CLASSIFIER_INPUT_WIDTH / 3) pos = 'l';
-                else if (bbox.cx <= EI_CLASSIFIER_INPUT_WIDTH * 2 / 3) pos = 'c';
-                else pos = 'r';
-                ESP_LOGI(TAG, "pposisi: %c", pos);
-                uint8_t esp_data[7] = {0x5A, 0x9F, 0x3A, 0x41, 0x6F, pos, 0x00};
+                if (bbox.cx <= EI_CLASSIFIER_INPUT_WIDTH / 3) esp_data[5] = 'r'; //pos = 'r';
+                else if (bbox.cx <= EI_CLASSIFIER_INPUT_WIDTH * 2 / 3)  esp_data[5] = 'c'; //pos = 'c';
+                else esp_data[5] = 'l'; //pos = 'l';
+                //ESP_LOGI(TAG, "pposisi: %c", pos);
+                esp_data[5] = pos;
+                //uint8_t esp_data[7] = {0x5A, 0x9F, 0x3A, 0x41, 0x6F, pos, 0x00};
                 uart_write_bytes(UART_NUM_0, esp_data, sizeof(esp_data));
             });
         }  
