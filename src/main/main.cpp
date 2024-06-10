@@ -18,7 +18,7 @@ using eloq::camera;
 using eloq::ei::yolo;
 
 static const char *TAG = "main";
-char pos = 'n';
+uint8_t pos = 'n';
 uint8_t esp_data[7] = {0x5A, 0x9F, 0x3A, 0x41, 0x6F, pos, 0x00};
 
 extern "C" void app_main() {
@@ -55,7 +55,7 @@ extern "C" void app_main() {
             continue;
         }
          if (!yolo.foundAnyObject()) {
-            //pos = 'n';
+            pos = 'n';
             //ESP_LOGI(TAG, "pposisi: %c", pos);
             //uint8_t esp_data[7] = {0x5A, 0x9F, 0x3A, 0x41, 0x6F, pos, 0x00};
             esp_data[5] = 'n';
@@ -64,26 +64,35 @@ extern "C" void app_main() {
             continue;
         }
 
-        if (yolo.first.cx <= EI_CLASSIFIER_INPUT_WIDTH / 3) esp_data[5] = 'r'; //pos = 'r';
-        else if (yolo.first.cx <= EI_CLASSIFIER_INPUT_WIDTH * 2 / 3) esp_data[5] = 'c'; //pos = 'c';
-        else esp_data[5] = 'r';  //pos = 'l';
+/*         if (yolo.first.cx <= EI_CLASSIFIER_INPUT_WIDTH / 3) pos = 'l'; //esp_data[5] = 'l'; 
+        else if (yolo.first.cx <= EI_CLASSIFIER_INPUT_WIDTH * 2 / 3)  pos = 'c'; //esp_data[5] = 'c';
+        else pos = 'r';//esp_data[5] = 'r';  */
+
+        if (yolo.first.cx <= 13){
+            pos = 'l';
+        } else if (yolo.first.cx <= 19){
+            pos = 'c';
+        } else {
+            pos = 'r';
+        }
 
         //ESP_LOGI(TAG, "pposisi: %c", pos);
+        //ESP_LOGI(TAG, "cx: %u", yolo.first.cx);
 
         esp_data[5] = pos;
         uart_write_bytes(UART_NUM_0, esp_data, sizeof(esp_data));
 
-         if (yolo.count() > 1) {
+/*          if (yolo.count() > 1) {
             yolo.forEach([](int i, bbox_t bbox) {
-                if (bbox.cx <= EI_CLASSIFIER_INPUT_WIDTH / 3) esp_data[5] = 'r'; //pos = 'r';
+                if (bbox.cx <= EI_CLASSIFIER_INPUT_WIDTH / 3) esp_data[5] = 'l'; //pos = 'l';
                 else if (bbox.cx <= EI_CLASSIFIER_INPUT_WIDTH * 2 / 3)  esp_data[5] = 'c'; //pos = 'c';
-                else esp_data[5] = 'l'; //pos = 'l';
-                //ESP_LOGI(TAG, "pposisi: %c", pos);
+                else esp_data[5] = 'r'; //pos = 'r';
+                ESP_LOGI(TAG, "pposisi: %c", pos);
                 esp_data[5] = pos;
                 //uint8_t esp_data[7] = {0x5A, 0x9F, 0x3A, 0x41, 0x6F, pos, 0x00};
                 uart_write_bytes(UART_NUM_0, esp_data, sizeof(esp_data));
             });
-        }  
+        }  */ 
         vTaskDelay(10 / portTICK_PERIOD_MS); // Delay between captures
     }    
 }

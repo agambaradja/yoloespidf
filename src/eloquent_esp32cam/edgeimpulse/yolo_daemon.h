@@ -70,7 +70,7 @@ namespace Eloquent {
                 void start() {
                     thread
                         .withArgs((void*) this)
-                        .withStackSize(4000)
+                        .withStackSize(6000)
                         .withPriority(17) // Adjust priority as needed
                         .run([](void *args) {
                             yoloDaemon *self = (yoloDaemon*) args;
