@@ -25,73 +25,75 @@
 #include <stdint.h>
 #include "model_metadata.h"
 
-#include "tflite-model/tflite_learn_20_compiled.h"
+#include "tflite-model/tflite_learn_15.h"
 #include "edge-impulse-sdk/classifier/ei_model_types.h"
 #include "edge-impulse-sdk/classifier/inferencing_engines/engines.h"
 
-const char* ei_classifier_inferencing_categories[] = { "dummy", "korban" };
+const char* ei_classifier_inferencing_categories[] = { "d", "k" };
 
-uint8_t ei_dsp_config_19_axes[] = { 0 };
-const uint32_t ei_dsp_config_19_axes_size = 1;
-ei_dsp_config_image_t ei_dsp_config_19 = {
-    19, // uint32_t blockId
+ei_dsp_named_axis_t ei_dsp_config_13_named_axes[] = {
+    { .name = "Image", .axis = 0 }
+};
+size_t ei_dsp_config_13_named_axes_size = 1;
+uint8_t ei_dsp_config_13_axes[] = { 0 };
+const uint32_t ei_dsp_config_13_axes_size = 1;
+ei_dsp_config_image_t ei_dsp_config_13 = {
+    13, // uint32_t blockId
     1, // int implementationVersion
     1, // int length of axes
-    NULL, // named axes
-    0, // size of the named axes array
-    "RGB" // select channels
+    ei_dsp_config_13_named_axes, // named axes
+    ei_dsp_config_13_named_axes_size, // size of the named axes array
+    "Grayscale" // select channels
 };
 
 const size_t ei_dsp_blocks_size = 1;
 ei_model_dsp_t ei_dsp_blocks[ei_dsp_blocks_size] = {
-    { // DSP block 19
-        19,
-        3072, // output size
+    { // DSP block 13
+        13,
+        1024, // output size
         &extract_image_features, // DSP function pointer
-        (void*)&ei_dsp_config_19, // pointer to config struct
-        ei_dsp_config_19_axes, // array of offsets into the input stream, one for each axis
-        ei_dsp_config_19_axes_size, // number of axes
+        (void*)&ei_dsp_config_13, // pointer to config struct
+        ei_dsp_config_13_axes, // array of offsets into the input stream, one for each axis
+        ei_dsp_config_13_axes_size, // number of axes
         1, // version
         nullptr, // factory function
     }
 };
-const ei_config_tflite_eon_graph_t ei_config_tflite_graph_20 = {
+const ei_config_tflite_graph_t ei_config_tflite_graph_15 = {
     .implementation_version = 1,
-    .model_init = &tflite_learn_20_init,
-    .model_invoke = &tflite_learn_20_invoke,
-    .model_reset = &tflite_learn_20_reset,
-    .model_input = &tflite_learn_20_input,
-    .model_output = &tflite_learn_20_output,
+    .model = tflite_learn_15,
+    .model_size = tflite_learn_15_len,
+    .arena_size = tflite_learn_15_arena_size
 };
 
-const ei_learning_block_config_tflite_graph_t ei_learning_block_config_20 = {
+const ei_learning_block_config_tflite_graph_t ei_learning_block_config_15 = {
     .implementation_version = 1,
     .classification_mode = EI_CLASSIFIER_CLASSIFICATION_MODE_OBJECT_DETECTION,
-    .block_id = 20,
+    .block_id = 15,
     .object_detection = 1,
-    .object_detection_last_layer = EI_CLASSIFIER_LAST_LAYER_YOLOV5,
+    .object_detection_last_layer = EI_CLASSIFIER_LAST_LAYER_FOMO,
     .output_data_tensor = 0,
     .output_labels_tensor = 1,
     .output_score_tensor = 2,
     .threshold = 0.5,
-    .quantized = 0,
-    .compiled = 1,
-    .graph_config = (void*)&ei_config_tflite_graph_20
+    .quantized = 1,
+    .compiled = 0,
+    .graph_config = (void*)&ei_config_tflite_graph_15
 };
 
 const size_t ei_learning_blocks_size = 1;
-const uint32_t ei_learning_block_20_inputs[1] = { 19 };
-const uint32_t ei_learning_block_20_inputs_size = 1;
+const uint32_t ei_learning_block_15_inputs[1] = { 13 };
+const uint32_t ei_learning_block_15_inputs_size = 1;
 const ei_learning_block_t ei_learning_blocks[ei_learning_blocks_size] = {
     {
-        20,
+        15,
         false,
         &run_nn_inference,
-        (void*)&ei_learning_block_config_20,
+        (void*)&ei_learning_block_config_15,
         EI_CLASSIFIER_IMAGE_SCALING_NONE,
-        ei_learning_block_20_inputs,
-        ei_learning_block_20_inputs_size,
-        441
+        ei_learning_block_15_inputs,
+        ei_learning_block_15_inputs_size,
+        48
     },
 };
 
@@ -108,13 +110,13 @@ const ei_object_detection_nms_config_t ei_object_detection_nms = {
     0.2f  /* NMS IOU threshold */
 };
 
-const ei_impulse_t impulse_360618_0 = {
-    .project_id = 360618,
-    .project_owner = "Agam",
-    .project_name = "espyolo",
-    .deploy_version = 20,
+const ei_impulse_t impulse_421611_0 = {
+    .project_id = 421611,
+    .project_owner = "Tian",
+    .project_name = "test andromeda nasional",
+    .deploy_version = 44,
 
-    .nn_input_frame_size = 3072,
+    .nn_input_frame_size = 1024,
     .raw_sample_count = 1024,
     .raw_samples_per_frame = 1,
     .dsp_input_frame_size = 1024 * 1,
@@ -127,9 +129,9 @@ const ei_impulse_t impulse_360618_0 = {
     .dsp_blocks = ei_dsp_blocks,
     
     .object_detection_count = 10,
-    .fomo_output_size = 0,
+    .fomo_output_size = 4,
     
-    .tflite_output_features_count = 441,
+    .tflite_output_features_count = 48,
     .learning_blocks_size = ei_learning_blocks_size,
     .learning_blocks = ei_learning_blocks,
 
@@ -147,7 +149,7 @@ const ei_impulse_t impulse_360618_0 = {
     .object_detection_nms = ei_object_detection_nms
 };
 
-ei_impulse_handle_t impulse_handle_360618_0 = ei_impulse_handle_t( &impulse_360618_0 );
-ei_impulse_handle_t& ei_default_impulse = impulse_handle_360618_0;
+ei_impulse_handle_t impulse_handle_421611_0 = ei_impulse_handle_t( &impulse_421611_0 );
+ei_impulse_handle_t& ei_default_impulse = impulse_handle_421611_0;
 
 #endif // _EI_CLASSIFIER_MODEL_METADATA_H_
