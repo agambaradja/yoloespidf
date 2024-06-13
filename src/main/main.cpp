@@ -8,6 +8,7 @@
 #include "freertos/task.h"
 #include "edge-impulse-sdk/dsp/image/image.hpp"
 #include "src\edge-impulse-sdk\classifier\ei_run_classifier.h"
+#include <driver/uart.h>
 
 #define TAG "EdgeImpulseDemo"
 
@@ -38,6 +39,15 @@
 #define EI_CAMERA_RAW_FRAME_BUFFER_COLS 320
 #define EI_CAMERA_RAW_FRAME_BUFFER_ROWS 240
 #define EI_CAMERA_FRAME_BYTE_SIZE 3
+
+#ifndef RX
+#define RX 44
+#endif
+
+#ifndef TX
+#define TX 43
+#endif
+
 
 static bool debug_nn = false;
 static bool is_initialised = false;
@@ -77,8 +87,24 @@ bool ei_camera_capture(uint32_t img_width, uint32_t img_height, uint8_t* out_buf
 static int ei_camera_get_data(size_t offset, size_t length, float* out_ptr);
 
 uint32_t cx;
+uint8_t data[7] = {0x5A, 0x9F, 0x3A, 0x41, 0x6F, 'n', 0x00};
 
 extern "C" void app_main() {
+    const uart_port_t uart_num = UART_NUM_0;
+    uart_config_t uart_config = {
+        .baud_rate = 115200,
+        .data_bits = UART_DATA_8_BITS,
+        .parity = UART_PARITY_DISABLE,
+        .stop_bits = UART_STOP_BITS_1,
+        .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
+        .rx_flow_ctrl_thresh = 122,
+        .source_clk = UART_SCLK_APB,
+    };
+
+    uart_param_config(uart_num, &uart_config);
+    uart_set_pin(uart_num, TX, RX, -1, -1);
+    uart_driver_install(uart_num, 1024 * 2 , 0, 0, NULL, 0);
+
     ESP_LOGI(TAG, "Edge Impulse Inferencing Demo");
     if (!ei_camera_init()) {
         ESP_LOGE(TAG, "Failed to initialize Camera!");
@@ -134,6 +160,8 @@ extern "C" void app_main() {
 
             ESP_LOGI(TAG, "  %s (%f) [ x: %u, y: %u, width: %u, height: %u , cx: %u]",
                     bb.label, bb.value, bb.x, bb.y, bb.width, bb.height, cx);
+
+            uart_write_bytes(UART_NUM_0, data, sizeof(data));
         }
 #else
         ESP_LOGI(TAG, "Predictions:");
