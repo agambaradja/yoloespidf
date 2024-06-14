@@ -86,7 +86,7 @@ void ei_camera_deinit();
 bool ei_camera_capture(uint32_t img_width, uint32_t img_height, uint8_t* out_buf);
 static int ei_camera_get_data(size_t offset, size_t length, float* out_ptr);
 
-uint32_t cx;
+uint32_t cx, x2;
 uint8_t data[7] = {0x5A, 0x9F, 0x3A, 0x41, 0x6F, 'n', 0x00};
 
 extern "C" void app_main() {
@@ -156,11 +156,22 @@ extern "C" void app_main() {
                 continue;
             }
 
-            cx = bb.x + bb.width / 2;
-
+            //cx = bb.x + bb.width / 2;
+            x2 = bb.x + bb.width;
+            cx = (bb.x + x2) / 2;
             ESP_LOGI(TAG, "  %s (%f) [ x: %u, y: %u, width: %u, height: %u , cx: %u]",
                     bb.label, bb.value, bb.x, bb.y, bb.width, bb.height, cx);
 
+    if (bb.label == 'k')
+    {
+        if (bbox.cx <= 12){
+            pos = 'l';
+        } else if (bbox.cx <= 26){
+            pos = 'c';
+        } else {
+            pos = 'r';
+        }
+    }
             uart_write_bytes(UART_NUM_0, data, sizeof(data));
         }
 #else
