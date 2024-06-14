@@ -76,7 +76,7 @@
 #ifndef EI_CLASSIFIER_TFLITE_ENABLE_ESP_NN
     #if defined(ESP32)
         #include "sdkconfig.h"
-        #define EI_CLASSIFIER_TFLITE_ENABLE_ESP_NN      1
+        #define EI_CLASSIFIER_TFLITE_ENABLE_ESP_NN      0
         #define ESP_NN                                  1
     #endif // ESP32 check
     #if defined(CONFIG_IDF_TARGET_ESP32S3)

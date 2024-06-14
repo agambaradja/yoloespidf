@@ -43,14 +43,14 @@ ei_dsp_config_image_t ei_dsp_config_13 = {
     1, // int length of axes
     ei_dsp_config_13_named_axes, // named axes
     ei_dsp_config_13_named_axes_size, // size of the named axes array
-    "Grayscale" // select channels
+    "RGB" // select channels
 };
 
 const size_t ei_dsp_blocks_size = 1;
 ei_model_dsp_t ei_dsp_blocks[ei_dsp_blocks_size] = {
     { // DSP block 13
         13,
-        1024, // output size
+        4800, // output size
         &extract_image_features, // DSP function pointer
         (void*)&ei_dsp_config_13, // pointer to config struct
         ei_dsp_config_13_axes, // array of offsets into the input stream, one for each axis
@@ -93,7 +93,7 @@ const ei_learning_block_t ei_learning_blocks[ei_learning_blocks_size] = {
         EI_CLASSIFIER_IMAGE_SCALING_NONE,
         ei_learning_block_15_inputs,
         ei_learning_block_15_inputs_size,
-        48
+        75
     },
 };
 
@@ -114,14 +114,14 @@ const ei_impulse_t impulse_421611_0 = {
     .project_id = 421611,
     .project_owner = "Tian",
     .project_name = "test andromeda nasional",
-    .deploy_version = 44,
+    .deploy_version = 56,
 
-    .nn_input_frame_size = 1024,
-    .raw_sample_count = 1024,
+    .nn_input_frame_size = 4800,
+    .raw_sample_count = 1600,
     .raw_samples_per_frame = 1,
-    .dsp_input_frame_size = 1024 * 1,
-    .input_width = 32,
-    .input_height = 32,
+    .dsp_input_frame_size = 1600 * 1,
+    .input_width = 40,
+    .input_height = 40,
     .input_frames = 1,
     .interval_ms = 1,
     .frequency = 0,
@@ -129,9 +129,9 @@ const ei_impulse_t impulse_421611_0 = {
     .dsp_blocks = ei_dsp_blocks,
     
     .object_detection_count = 10,
-    .fomo_output_size = 4,
+    .fomo_output_size = 5,
     
-    .tflite_output_features_count = 48,
+    .tflite_output_features_count = 75,
     .learning_blocks_size = ei_learning_blocks_size,
     .learning_blocks = ei_learning_blocks,
 
@@ -139,7 +139,7 @@ const ei_impulse_t impulse_421611_0 = {
 
     .sensor = EI_CLASSIFIER_SENSOR_CAMERA,
     .fusion_string = "image",
-    .slice_size = (1024/4),
+    .slice_size = (1600/4),
     .slices_per_model_window = 4,
 
     .has_anomaly = EI_ANOMALY_TYPE_UNKNOWN,

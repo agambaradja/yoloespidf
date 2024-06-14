@@ -162,7 +162,7 @@ extern "C" void app_main() {
             ESP_LOGI(TAG, "  %s (%f) [ x: %u, y: %u, width: %u, height: %u , cx: %u]",
                     bb.label, bb.value, bb.x, bb.y, bb.width, bb.height, cx);
 
-    if (bb.label == 'k')
+/*     if (bb.label == 'k')
     {
         if (bbox.cx <= 12){
             pos = 'l';
@@ -171,9 +171,9 @@ extern "C" void app_main() {
         } else {
             pos = 'r';
         }
-    }
-            uart_write_bytes(UART_NUM_0, data, sizeof(data));
-        }
+    } */
+/*             uart_write_bytes(UART_NUM_0, data, sizeof(data));
+ */        }
 #else
         ESP_LOGI(TAG, "Predictions:");
         for (uint16_t i = 0; i < EI_CLASSIFIER_LABEL_COUNT; i++) {
