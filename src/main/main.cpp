@@ -108,6 +108,7 @@ extern "C" void app_main()
     uart_set_pin(uart_num, TX, RX, -1, -1);
     uart_driver_install(uart_num, 1024 * 2, 0, 0, NULL, 0);
 
+
     if (!ei_camera_init())
     {
         ESP_LOGE(TAG, "Failed to initialize Camera!");
@@ -120,7 +121,7 @@ extern "C" void app_main()
 
     while (true)
     {
-        vTaskDelay(5 / portTICK_PERIOD_MS);
+        vTaskDelay(5 / portTICK_PERIOD_MS);  
 
         snapshot_buf = static_cast<uint8_t *>(malloc(EI_CAMERA_RAW_FRAME_BUFFER_COLS * EI_CAMERA_RAW_FRAME_BUFFER_ROWS * EI_CAMERA_FRAME_BYTE_SIZE));
 
@@ -155,56 +156,56 @@ extern "C" void app_main()
 
 #if EI_CLASSIFIER_OBJECT_DETECTION == 1
         //ESP_LOGI(TAG, "Object detection bounding boxes:");
+                data[5] = 0x00;
+                uart_write_bytes(UART_NUM_0, data, sizeof(data));
         for (uint32_t i = 0; i < result.bounding_boxes_count; i++)
         {
+
             ei_impulse_result_bounding_box_t bb = result.bounding_boxes[i];
             
             if (bb.value == 0)
             {
-                data[5] = 0x00;
-                uart_write_bytes(UART_NUM_0, data, sizeof(data));            
+    
+                continue;
             } 
-            else if (bb.label == korban)
+
+            if (bb.label == korban)
             {
                 x2 = bb.x + bb.width;
                 cx = (bb.x + x2) / 2;
                 if (cx <= 12)
                 {
-                    data[5] = 'l';
+                    data[5] = 0x6C;
                 }
                 else if (cx <= 27)
                 {
-                    data[5] = 'c';
+                    data[5] = 0x63;
                 }
                 else
                 {
-                    data[5] = 'r';
+                    data[5] = 0x72;
                 }
-                // cx = bb.x + bb.width / 2;
-                //ESP_LOGI(TAG, "  %s (%f) [ x: %u, y: %u, width: %u, height: %u , cx: %u, pos: %c]", bb.label, bb.value, bb.x, bb.y, bb.width, bb.height, cx, data[5]);
-
-                uart_write_bytes(UART_NUM_0, data, sizeof(data));
             }
             else
             {
                 data[5] = 0x00;
-                uart_write_bytes(UART_NUM_0, data, sizeof(data));
             }
+            uart_write_bytes(UART_NUM_0, data, sizeof(data));
         }
 #else
-        ESP_LOGI(TAG, "Predictions:");
+        //ESP_LOGI(TAG, "Predictions:");
         for (uint16_t i = 0; i < EI_CLASSIFIER_LABEL_COUNT; i++)
         {
-            ESP_LOGI(TAG, "  %s: %.5f", ei_classifier_inferencing_categories[i], result.classification[i].value);
+            //ESP_LOGI(TAG, "  %s: %.5f", ei_classifier_inferencing_categories[i], result.classification[i].value);
         }
 #endif
 
 #if EI_CLASSIFIER_HAS_ANOMALY
-        ESP_LOGI(TAG, "Anomaly prediction: %.3f", result.anomaly);
+        //ESP_LOGI(TAG, "Anomaly prediction: %.3f", result.anomaly);
 #endif
 
 #if EI_CLASSIFIER_HAS_VISUAL_ANOMALY
-        ESP_LOGI(TAG, "Visual anomalies:");
+        //ESP_LOGI(TAG, "Visual anomalies:");
         for (uint32_t i = 0; i < result.visual_ad_count; i++)
         {
             ei_impulse_result_bounding_box_t bb = result.visual_ad_grid_cells[i];
@@ -212,8 +213,7 @@ extern "C" void app_main()
             {
                 continue;
             }
-            ESP_LOGI(TAG, "  %s (%f) [ x: %u, y: %u, width: %u, height: %u ]",
-                     bb.label, bb.value, bb.x, bb.y, bb.width, bb.height);
+            //ESP_LOGI(TAG, "  %s (%f) [ x: %u, y: %u, width: %u, height: %u ]", bb.label, bb.value, bb.x, bb.y, bb.width, bb.height);
         }
 #endif
 
