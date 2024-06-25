@@ -58,11 +58,11 @@
 #define EI_CLASSIFIER_DATATYPE_UINT8             3
 #define EI_CLASSIFIER_DATATYPE_INT8              9
 
-#define EI_CLASSIFIER_PROJECT_ID                 421611
-#define EI_CLASSIFIER_PROJECT_OWNER              "Tian"
-#define EI_CLASSIFIER_PROJECT_NAME               "test andromeda nasional"
-#define EI_CLASSIFIER_PROJECT_DEPLOY_VERSION     56
-#define EI_CLASSIFIER_NN_INPUT_FRAME_SIZE        4800
+#define EI_CLASSIFIER_PROJECT_ID                 430311
+#define EI_CLASSIFIER_PROJECT_OWNER              "andromeda "
+#define EI_CLASSIFIER_PROJECT_NAME               "andro trial"
+#define EI_CLASSIFIER_PROJECT_DEPLOY_VERSION     6
+#define EI_CLASSIFIER_NN_INPUT_FRAME_SIZE        1600
 #define EI_CLASSIFIER_RAW_SAMPLE_COUNT           1600
 #define EI_CLASSIFIER_RAW_SAMPLES_PER_FRAME      1
 #define EI_CLASSIFIER_DSP_INPUT_FRAME_SIZE       (EI_CLASSIFIER_RAW_SAMPLE_COUNT * EI_CLASSIFIER_RAW_SAMPLES_PER_FRAME)
@@ -126,7 +126,7 @@
 
 #define EI_STUDIO_VERSION_MAJOR             1
 #define EI_STUDIO_VERSION_MINOR             52
-#define EI_STUDIO_VERSION_PATCH             2
+#define EI_STUDIO_VERSION_PATCH             10
 
 #define EI_CLASSIFIER_HR_ENABLED            0
 

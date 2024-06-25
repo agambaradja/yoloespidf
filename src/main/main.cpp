@@ -151,19 +151,20 @@ extern "C" void app_main()
             continue;
         }
 
-        ESP_LOGI(TAG, "Predictions (DSP: %d ms., Classification: %d ms., Anomaly: %d ms.): ",
-                 result.timing.dsp, result.timing.classification, result.timing.anomaly);
+        //ESP_LOGI(TAG, "Predictions (DSP: %d ms., Classification: %d ms., Anomaly: %d ms.): ", result.timing.dsp, result.timing.classification, result.timing.anomaly);
 
 #if EI_CLASSIFIER_OBJECT_DETECTION == 1
-        ESP_LOGI(TAG, "Object detection bounding boxes:");
+        //ESP_LOGI(TAG, "Object detection bounding boxes:");
         for (uint32_t i = 0; i < result.bounding_boxes_count; i++)
         {
             ei_impulse_result_bounding_box_t bb = result.bounding_boxes[i];
+            
             if (bb.value == 0)
             {
-                continue;
-            }
-            if (bb.label == korban)
+                data[5] = 0x00;
+                uart_write_bytes(UART_NUM_0, data, sizeof(data));            
+            } 
+            else if (bb.label == korban)
             {
                 x2 = bb.x + bb.width;
                 cx = (bb.x + x2) / 2;
@@ -180,14 +181,14 @@ extern "C" void app_main()
                     data[5] = 'r';
                 }
                 // cx = bb.x + bb.width / 2;
-                ESP_LOGI(TAG, "  %s (%f) [ x: %u, y: %u, width: %u, height: %u , cx: %u, pos: %c]",
-                         bb.label, bb.value, bb.x, bb.y, bb.width, bb.height, cx, data[5]);
+                //ESP_LOGI(TAG, "  %s (%f) [ x: %u, y: %u, width: %u, height: %u , cx: %u, pos: %c]", bb.label, bb.value, bb.x, bb.y, bb.width, bb.height, cx, data[5]);
 
                 uart_write_bytes(UART_NUM_0, data, sizeof(data));
             }
             else
             {
-                continue;
+                data[5] = 0x00;
+                uart_write_bytes(UART_NUM_0, data, sizeof(data));
             }
         }
 #else
